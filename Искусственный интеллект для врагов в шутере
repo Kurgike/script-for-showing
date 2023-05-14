@@ -1,0 +1,43 @@
+using UnityEngine;
+using System.Collections;
+
+public class EnemyAI : MonoBehaviour
+{
+    public Transform target; // цель, которую противник будет атаковать
+    public float moveSpeed = 3f; // скорость передвижения противника
+    public float rotationSpeed = 3f; // скорость поворота противника
+    public float attackRange = 1f; // дистанция, на которой противник начнет атаку
+    public float sightRange = 5f; // дистанция видимости противника
+
+    private Transform _transform; // трансформ противника
+
+    void Awake()
+    {
+        _transform = transform; // получаем трансформ противника
+    }
+
+    void Update()
+    {
+        // расчет расстояния до цели
+        float distance = Vector3.Distance(target.position, _transform.position);
+
+        // если игрок находится в зоне видимости противника
+        if (distance <= sightRange)
+        {
+            // повернуться в сторону игрока
+            _transform.rotation = Quaternion.Slerp(_transform.rotation, Quaternion.LookRotation(target.position - _transform.position), rotationSpeed * Time.deltaTime);
+
+            // если игрок находится в зоне атаки
+            if (distance <= attackRange)
+            {
+                // атаковать игрока
+                Debug.Log("Attacking player!");
+            }
+            else
+            {
+                // переместиться в сторону игрока
+                _transform.position += _transform.forward * moveSpeed * Time.deltaTime;
+            }
+        }
+    }
+}
